@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>አስተዳዳሪ ፓነል - Ethio Exit Master</title>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <style>
+        /* Copy all styles from adminHtml section in your worker */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --orange: #f97316;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --gray-light: #e2e8f0;
+            --white: #ffffff;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f1f5f9;
+            color: var(--dark);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 24px 32px;
+            border-radius: 24px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header-title h1 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .header-title p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .bulk-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .bulk-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid var(--gray-light);
+            box-shadow: var(--card-shadow);
+        }
+
+        .bulk-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 25px -5px rgba(37,99,235,0.2);
+        }
+
+        .bulk-card.model { border-top: 4px solid var(--orange); }
+        .bulk-card.exit { border-top: 4px solid var(--danger); }
+
+        .bulk-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .bulk-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .bulk-card p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: white;
+            border-radius: 32px;
+            padding: 32px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--gray-light);
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .close-btn {
+            background: #fee2e2;
+            color: #ef4444;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .format-hint {
+            background: var(--light);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .format-hint code {
+            background: var(--gray-light);
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-family: monospace;
+        }
+
+        .bulk-textarea {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid var(--gray-light);
+            border-radius: 16px;
+            font-family: inherit;
+            font-size: 14px;
+            margin-bottom: 16px;
+            min-height: 200px;
+        }
+
+        .bulk-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37,99,235,0.3); }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .btn-success:hover { background: #0d9488; transform: translateY(-2px); }
+
+        .preview-section {
+            background: var(--light);
+            border-radius: 16px;
+            padding: 16px;
+            margin: 16px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .preview-item {
+            background: white;
+            border: 1px solid var(--gray-light);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .preview-question {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .message {
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: white;
+            border: 1px solid var(--gray-light);
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-header h3 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .payments-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .payment-card {
+            background: var(--light);
+            border: 1px solid var(--gray-light);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .payment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .payment-id {
+            font-weight: 700;
+            color: var(--primary);
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 12px;
+        }
+
+        .payment-status {
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #f59e0b;
+        }
+
+        .status-approved {
+            background: #d1fae5;
+            color: #10b981;
+        }
+
+        .status-rejected {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .payment-detail {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            word-break: break-word;
+        }
+
+        .payment-detail strong {
+            min-width: 80px;
+            color: var(--dark);
+        }
+
+        .payment-proof-img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 12px;
+            margin: 12px 0;
+            cursor: pointer;
+            border: 2px solid var(--gray-light);
+            transition: var(--transition);
+        }
+
+        .payment-proof-img:hover {
+            transform: scale(1.02);
+            border-color: var(--primary);
+        }
+
+        .payment-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .btn-approve, .btn-reject {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-approve {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-reject {
+            background: var(--danger);
+            color: white;
+        }
+
+        .list-item {
+            background: var(--light);
+            border: 1px solid var(--gray-light);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .list-item:hover {
+            background: white;
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .item-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .item-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .delete-btn {
+            background: #fee2e2;
+            color: #ef4444;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .delete-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .add-form {
+            background: var(--light);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--gray-light);
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: var(--transition);
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37,99,235,0.3);
+        }
+
+        .ql-editor {
+            min-height: 150px;
+            background: white;
+            border-radius: 12px;
+        }
+
+        .save-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .view { display: none; }
+        .view.active { display: block; }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            .admin-header { flex-direction: column; text-align: center; }
+            .bulk-grid { grid-template-columns: 1fr; }
+            .payment-detail { flex-direction: column; gap: 4px; }
+            .payment-detail strong { min-width: auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <div class="header-title">
+                <h1>📊 አስተዳዳሪ ፓነል Pro</h1>
+                <p>Ethio Exit Master ማኔጅመንት</p>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <span>🚪</span> ውጣ
+            </button>
+        </div>
+
+        <div class="bulk-grid">
+            <div class="bulk-card model" onclick="openBulkModal('model')">
+                <div class="bulk-icon">📋</div>
+                <h3>የሞዴል ፈተና ጥያቄ መጫኛ</h3>
+                <p>ለተማሪዎች የሞዴል ፈተና ጥያቄዎችን ይጫኑ</p>
+            </div>
+            <div class="bulk-card exit" onclick="openBulkModal('exit')">
+                <div class="bulk-icon">🎯</div>
+                <h3>የ 100 Exit Exam ጥያቄ መጫኛ</h3>
+                <p>ለተማሪዎች የ Exit Exam ጥያቄዎችን ይጫኑ</p>
+            </div>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="showView('depts')">🏛️ ዲፓርትመንቶች</button>
+            <button class="tab-btn" onclick="showView('payments')">💰 ክፍያዎች</button>
+            <button class="tab-btn" onclick="showView('students')">👥 ተማሪዎች</button>
+        </div>
+
+        <div id="view-depts" class="view active">
+            <div class="card">
+                <div class="card-header">
+                    <h3>🏛️ ዲፓርትመንቶች</h3>
+                    <span class="badge" id="deptCount">0</span>
+                </div>
+                <div id="dept-list" class="list-container"></div>
+                
+                <div class="add-form">
+                    <h4>➕ አዲስ ዲፓርትመንት</h4>
+                    <input type="text" id="new-dept" class="form-input" placeholder="ዲፓርትመንት ስም">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="is-paid">
+                        <label for="is-paid">💰 ክፍያ ያስፈልገዋል</label>
+                    </div>
+                    <button class="add-btn" onclick="addDept()">ፍጠር</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-courses" class="view">
+            <button class="tab-btn" onclick="goBack()">← ተመለስ</button>
+            <div class="card">
+                <div class="card-header">
+                    <h3>📚 ኮርሶች</h3>
+                </div>
+                <div id="course-list" class="list-container"></div>
+                <div class="add-form">
+                    <h4>➕ አዲስ ኮርስ</h4>
+                    <input type="text" id="new-course" class="form-input" placeholder="ኮርስ ስም">
+                    <button class="add-btn" onclick="addCourse()">ፍጠር</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-chapters" class="view">
+            <button class="tab-btn" onclick="goBack()">← ተመለስ</button>
+            <div class="card">
+                <div class="card-header">
+                    <h3>📑 ቻፕተሮች</h3>
+                </div>
+                <div id="chapter-list" class="list-container"></div>
+                <div class="add-form">
+                    <h4>➕ አዲስ ቻፕተር</h4>
+                    <input type="text" id="new-chapter" class="form-input" placeholder="ቻፕተር ስም">
+                    <button class="add-btn" onclick="addChapter()">ፍጠር</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-editor" class="view">
+            <button class="tab-btn" onclick="goBack()">← ተመለስ</button>
+            <div class="card">
+                <div class="card-header">
+                    <h3>📝 ኖት አርትዕ</h3>
+                </div>
+                <div class="editor-section">
+                    <h4>📚 ሙሉ ኖት</h4>
+                    <div id="full-editor"></div>
+                </div>
+                <div class="editor-section">
+                    <h4>⚡ አጭር ኖት</h4>
+                    <div id="short-editor"></div>
+                </div>
+                <button class="save-btn" onclick="saveNotes()">💾 ኖት አስቀምጥ</button>
+                
+                <h3 style="margin:20px 0">❓ አዲስ ጥያቄ</h3>
+                <div class="question-form">
+                    <div class="form-group">
+                        <label>ጥያቄ</label>
+                        <input type="text" id="q" class="form-input" placeholder="ጥያቄ">
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div><label>ሀ</label><input type="text" id="a" class="form-input" placeholder="ሀ"></div>
+                        <div><label>ለ</label><input type="text" id="b" class="form-input" placeholder="ለ"></div>
+                        <div><label>ሐ</label><input type="text" id="c" class="form-input" placeholder="ሐ"></div>
+                        <div><label>መ</label><input type="text" id="d" class="form-input" placeholder="መ"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>ትክክለኛ መልስ</label>
+                        <select id="correct" class="form-input">
+                            <option value="A">ሀ</option>
+                            <option value="B">ለ</option>
+                            <option value="C">ሐ</option>
+                            <option value="D">መ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ማብራሪያ</label>
+                        <textarea id="explain" class="form-input" rows="3" placeholder="ማብራሪያ..."></textarea>
+                    </div>
+                    <button class="add-btn" onclick="addQuestion()">➕ ጥያቄ አስቀምጥ</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-payments" class="view">
+            <div class="card">
+                <div class="card-header">
+                    <h3>💰 የክፍያ ጥያቄዎች</h3>
+                    <span class="badge" id="paymentCount">0</span>
+                </div>
+                <div class="payments-grid" id="payments-list"></div>
+            </div>
+        </div>
+
+        <div id="view-students" class="view">
+            <div class="card">
+                <div class="card-header">
+                    <h3>👥 ተማሪዎች</h3>
+                    <span class="badge" id="studentCount">0</span>
+                </div>
+                <div class="students-grid" id="students-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="bulkModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">📋 የሞዴል ፈተና ጥያቄ መጫኛ</h2>
+                <button class="close-btn" onclick="closeBulkModal()">✕</button>
+            </div>
+            <div class="format-hint">
+                <strong>📝 ቅርጸት:</strong><br>
+                <code>1. ጥያቄ? A) አማራጭ1 B) አማራጭ2 C) አማራጭ3 D) አማራጭ4 Answer: A Explanation: ማብራሪያ...</code>
+            </div>
+            <textarea id="bulkTextarea" class="bulk-textarea" placeholder="ጥያቄዎችን ይለጥፉ..."></textarea>
+            <button class="btn btn-primary" onclick="parseBulk()">🔍 ተንተን አሳይ</button>
+            <div id="bulkPreview" class="preview-section" style="display:none;"></div>
+            <button class="btn btn-success" onclick="uploadBulk()" id="uploadBtn" style="display:none;">📥 ጥያቄዎችን አስቀምጥ</button>
+            <div id="bulkMessage" class="message" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    <script>
+        // API Base URL - CHANGE THIS TO YOUR CLOUDFLARE WORKER URL
+        const API_BASE = 'https://your-worker.workers.dev';
+
+        const fullQuill = new Quill('#full-editor', { theme: 'snow', placeholder: 'ሙሉ ኖት...' });
+        const shortQuill = new Quill('#short-editor', { theme: 'snow', placeholder: 'አጭር ኖት...' });
+
+        let selectedDept = null, selectedCourse = null, selectedChapter = null;
+        let history = ['depts'];
+        let currentBulkType = 'model';
+        let parsedQuestions = [];
+
+        async function apiFetch(endpoint, options = {}) {
+            const url = endpoint.startsWith('http') ? endpoint : API_BASE + endpoint;
+            return fetch(url, {
+                ...options,
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                }
+            });
+        }
+
+        function openBulkModal(type) {
+            currentBulkType = type;
+            document.getElementById('modalTitle').innerHTML = type === 'model' ? '📋 የሞዴል ፈተና ጥያቄ መጫኛ' : '🎯 የ 100 Exit Exam ጥያቄ መጫኛ';
+            document.getElementById('bulkModal').classList.add('active');
+            resetBulk();
+        }
+
+        function closeBulkModal() {
+            document.getElementById('bulkModal').classList.remove('active');
+        }
+
+        function resetBulk() {
+            document.getElementById('bulkTextarea').value = '';
+            document.getElementById('bulkPreview').style.display = 'none';
+            document.getElementById('uploadBtn').style.display = 'none';
+            document.getElementById('bulkMessage').style.display = 'none';
+            parsedQuestions = [];
+        }
+
+        function parseBulk() {
+            const text = document.getElementById('bulkTextarea').value;
+            const lines = text.split('\\n').filter(l => l.trim());
+            parsedQuestions = [];
+            
+            for (const line of lines) {
+                const match = line.match(/^(\\d+\\.)?\\s*(.+?)\\s*A\\)\\s*(.+?)\\s*B\\)\\s*(.+?)\\s*C\\)\\s*(.+?)\\s*D\\)\\s*(.+?)\\s*Answer:\\s*([A-D])(?:\\s*Explanation:\\s*(.+))?$/i);
+                if (match) {
+                    parsedQuestions.push({
+                        question: match[2].trim(),
+                        options: { A: match[3].trim(), B: match[4].trim(), C: match[5].trim(), D: match[6].trim() },
+                        correct: match[7].toUpperCase(),
+                        explanation: match[8] ? match[8].trim() : ''
+                    });
+                }
+            }
+            
+            if (parsedQuestions.length === 0) {
+                showBulkMessage('error', 'ምንም ጥያቄ አልተገኘም');
+                return;
+            }
+            
+            let preview = '<div class="preview-header">' + parsedQuestions.length + ' ጥያቄዎች ተገኝተዋል</div>';
+            parsedQuestions.slice(0,3).forEach((q,i) => {
+                preview += '<div class="preview-item"><div class="preview-question">' + (i+1) + '. ' + q.question + '</div>' +
+                    '<div>A) ' + q.options.A + ' B) ' + q.options.B + ' C) ' + q.options.C + ' D) ' + q.options.D + '</div>' +
+                    '<div>✅ ' + q.correct + '</div>' + (q.explanation ? '<div>💡 ' + q.explanation.substring(0,50) + '...</div>' : '') + '</div>';
+            });
+            document.getElementById('bulkPreview').innerHTML = preview;
+            document.getElementById('bulkPreview').style.display = 'block';
+            document.getElementById('uploadBtn').style.display = 'block';
+        }
+
+        async function uploadBulk() {
+            if (!parsedQuestions.length) return;
+            const btn = document.getElementById('uploadBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> በመጫን ላይ...';
+            
+            try {
+                const res = await apiFetch('/api/admin/upload-' + (currentBulkType === 'model' ? 'model' : '100-exit'), {
+                    method: 'POST',
+                    body: JSON.stringify({ questions: parsedQuestions })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    showBulkMessage('success', data.message);
+                    setTimeout(closeBulkModal, 2000);
+                } else throw new Error(data.error);
+            } catch (e) {
+                showBulkMessage('error', 'ስህተት ተፈጥሯል');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '📥 ጥያቄዎችን አስቀምጥ';
+            }
+        }
+
+        function showBulkMessage(type, text) {
+            const msg = document.getElementById('bulkMessage');
+            msg.className = 'message ' + type;
+            msg.innerHTML = '<span>' + (type==='success'?'✅':'⚠️') + '</span> ' + text;
+            msg.style.display = 'flex';
+            if (type === 'error') setTimeout(() => msg.style.display = 'none', 5000);
+        }
+
+        function showView(view) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + view).classList.add('active');
+            document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            history.push(view);
+            if (view === 'depts') loadDepts();
+            if (view === 'payments') loadPayments();
+            if (view === 'students') loadStudents();
+        }
+
+        function goBack() {
+            if (history.length > 1) {
+                history.pop();
+                const prev = history[history.length-1];
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                document.getElementById('view-' + prev).classList.add('active');
+                if (prev === 'depts') loadDepts();
+                if (prev === 'courses' && selectedDept) loadCourses(selectedDept.id);
+                if (prev === 'chapters' && selectedCourse) loadChapters(selectedCourse.id);
+                if (prev === 'editor' && selectedChapter) loadEditor();
+            }
+        }
+
+        async function logout() {
+            if (confirm('እርግጠኛ ነዎት?')) {
+                await apiFetch('/api/admin/logout', { method: 'POST' });
+                window.location.reload();
+            }
+        }
+
+        async function loadDepts() {
+            const res = await apiFetch('/api/depts');
+            const data = await res.json();
+            document.getElementById('deptCount').innerText = data.depts.length;
+            let html = '';
+            data.depts.forEach(d => {
+                html += `
+                    <div class="list-item" onclick="selectDept('${d.id}')">
+                        <div class="item-info"><span class="item-icon">🏛️</span>
+                            <div><div style="font-weight:600;">${d.name}</div><div style="font-size:12px;">${d.is_paid ? '💰 Paid' : '📚 Free'}</div></div>
+                        </div>
+                        <button class="delete-btn" onclick="deleteDept(event, '${d.id}')">ሰርዝ</button>
+                    </div>
+                `;
+            });
+            document.getElementById('dept-list').innerHTML = html || '<div class="list-item">ምንም የለም</div>';
+        }
+
+        function selectDept(id) {
+            selectedDept = { id };
+            loadCourses(id);
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-courses').classList.add('active');
+            history.push('courses');
+        }
+
+        async function addDept() {
+            const name = document.getElementById('new-dept').value;
+            const isPaid = document.getElementById('is-paid').checked;
+            if (!name) return alert('ስም ያስገቡ');
+            await apiFetch('/api/admin/depts', {
+                method: 'POST',
+                body: JSON.stringify({ name, is_paid: isPaid })
+            });
+            document.getElementById('new-dept').value = '';
+            loadDepts();
+        }
+
+        async function deleteDept(e, id) {
+            e.stopPropagation();
+            if (!confirm('እርግጠኛ ነዎት? ይህን ዲፓርትመንት መሰረዝ ይፈልጋሉ?')) return;
+            
+            await apiFetch('/api/admin/depts/' + id, {
+                method: 'DELETE'
+            });
+            loadDepts();
+        }
+
+        async function loadCourses(deptId) {
+            const res = await apiFetch('/api/courses?dept=' + deptId);
+            const courses = await res.json();
+            let html = '';
+            courses.forEach(c => {
+                html += `
+                    <div class="list-item" onclick="selectCourse('${c.id}')">
+                        <div class="item-info"><span class="item-icon">📚</span>${c.name}</div>
+                        <button class="delete-btn" onclick="deleteCourse(event, '${c.id}')">ሰርዝ</button>
+                    </div>
+                `;
+            });
+            document.getElementById('course-list').innerHTML = html || '<div class="list-item">ምንም የለም</div>';
+        }
+
+        function selectCourse(id) {
+            selectedCourse = { id };
+            loadChapters(id);
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-chapters').classList.add('active');
+            history.push('chapters');
+        }
+
+        async function addCourse() {
+            const name = document.getElementById('new-course').value;
+            if (!name || !selectedDept) return alert('ስም ያስገቡ');
+            await apiFetch('/api/admin/courses', {
+                method: 'POST',
+                body: JSON.stringify({ dept_id: selectedDept.id, name })
+            });
+            document.getElementById('new-course').value = '';
+            loadCourses(selectedDept.id);
+        }
+
+        async function deleteCourse(e, id) {
+            e.stopPropagation();
+            if (!confirm('እርግጠኛ ነዎት? ይህን ኮርስ መሰረዝ ይፈልጋሉ?')) return;
+            
+            await apiFetch('/api/admin/courses/' + id, {
+                method: 'DELETE'
+            });
+            loadCourses(selectedDept.id);
+        }
+
+        async function loadChapters(courseId) {
+            const res = await apiFetch('/api/chapters?course=' + courseId);
+            const chapters = await res.json();
+            let html = '';
+            chapters.forEach(ch => {
+                html += `
+                    <div class="list-item" onclick="selectChapter('${ch.id}')">
+                        <div class="item-info"><span class="item-icon">📑</span>${ch.name}</div>
+                        <button class="delete-btn" onclick="deleteChapter(event, '${ch.id}')">ሰርዝ</button>
+                    </div>
+                `;
+            });
+            document.getElementById('chapter-list').innerHTML = html || '<div class="list-item">ምንም የለም</div>';
+        }
+
+        function selectChapter(id) {
+            selectedChapter = { id };
+            loadEditor();
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-editor').classList.add('active');
+            history.push('editor');
+        }
+
+        async function addChapter() {
+            const name = document.getElementById('new-chapter').value;
+            if (!name || !selectedCourse) return alert('ስም ያስገቡ');
+            await apiFetch('/api/admin/chapters', {
+                method: 'POST',
+                body: JSON.stringify({ course_id: selectedCourse.id, name })
+            });
+            document.getElementById('new-chapter').value = '';
+            loadChapters(selectedCourse.id);
+        }
+
+        async function deleteChapter(e, id) {
+            e.stopPropagation();
+            if (!confirm('እርግጠኛ ነዎት? ይህን ቻፕተር መሰረዝ ይፈልጋሉ?')) return;
+            
+            await apiFetch('/api/admin/chapters/' + id, {
+                method: 'DELETE'
+            });
+            loadChapters(selectedCourse.id);
+        }
+
+        async function loadEditor() {
+            const res = await apiFetch('/api/notes?chapter=' + selectedChapter.id);
+            const notes = await res.json();
+            fullQuill.root.innerHTML = notes.full_note || '';
+            shortQuill.root.innerHTML = notes.short_note || '';
+        }
+
+        async function saveNotes() {
+            await apiFetch('/api/admin/notes', {
+                method: 'POST',
+                body: JSON.stringify({
+                    chapter_id: selectedChapter.id,
+                    full_note: fullQuill.root.innerHTML,
+                    short_note: shortQuill.root.innerHTML
+                })
+            });
+            alert('✅ ኖት ተቀምጧል');
+        }
+
+        async function addQuestion() {
+            const q = document.getElementById('q').value;
+            const a = document.getElementById('a').value;
+            const b = document.getElementById('b').value;
+            const c = document.getElementById('c').value;
+            const d = document.getElementById('d').value;
+            const correct = document.getElementById('correct').value;
+            const exp = document.getElementById('explain').value;
+            if (!q || !a || !b || !c || !d) return alert('ሁሉንም ይሙሉ');
+            await apiFetch('/api/admin/questions', {
+                method: 'POST',
+                body: JSON.stringify({ chapter_id: selectedChapter.id, question: q, a, b, c, d, correct, explanation: exp })
+            });
+            ['q','a','b','c','d','explain'].forEach(id => document.getElementById(id).value = '');
+            alert('✅ ጥያቄ ታክሏል');
+        }
+
+        async function loadPayments() {
+            try {
+                const res = await apiFetch('/api/admin/payments');
+                const payments = await res.json();
+                document.getElementById('paymentCount').innerText = payments.length;
+                
+                let html = '';
+                payments.forEach(p => {
+                    const statusClass = p.status === 'approved' ? 'status-approved' : 
+                                      p.status === 'rejected' ? 'status-rejected' : 'status-pending';
+                    
+                    html += `
+                        <div class="payment-card">
+                            <div class="payment-header">
+                                <span class="payment-id">${p.id}</span>
+                                <span class="payment-status ${statusClass}">${p.status}</span>
+                            </div>
+                            <div class="payment-detail"><strong>ተማሪ:</strong> ${p.student_username || 'Unknown'}</div>
+                            <div class="payment-detail"><strong>ዲፓርትመንት:</strong> ${p.dept_id || 'Unknown'}</div>
+                            <div class="payment-detail"><strong>መጠን:</strong> ${p.amount} ብር</div>
+                            <div class="payment-detail"><strong>ማጣቀሻ:</strong> ${p.reference}</div>
+                            <div class="payment-detail"><strong>ዘዴ:</strong> ${p.method}</div>
+                            <div class="payment-detail"><strong>ማስረጃ:</strong> ${p.proof_text}</div>
+                    `;
+                    
+                    if (p.proof_image_url) {
+                        html += '<div><img src="' + p.proof_image_url + '" class="payment-proof-img" onclick="window.open(this.src)"></div>';
+                    }
+                    
+                    html += `
+                            <div class="payment-detail"><strong>ቀን:</strong> ${new Date(p.timestamp).toLocaleString()}</div>
+                            <div class="payment-actions">
+                                <button class="btn-approve" onclick="updatePayment('${p.id}', 'approved')">አጽድቅ</button>
+                                <button class="btn-reject" onclick="updatePayment('${p.id}', 'rejected')">ንቀት</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                document.getElementById('payments-list').innerHTML = html || '<div class="list-item">ምንም ክፍያ የለም</div>';
+            } catch (error) {
+                console.error('Error loading payments:', error);
+            }
+        }
+
+        async function updatePayment(id, status) {
+            await apiFetch('/api/admin/payments/' + id, {
+                method: 'PATCH',
+                body: JSON.stringify({ status })
+            });
+            loadPayments();
+        }
+
+        async function loadStudents() {
+            try {
+                const res = await apiFetch('/api/admin/students');
+                const students = await res.json();
+                document.getElementById('studentCount').innerText = students.length;
+                
+                let html = '';
+                students.forEach(s => {
+                    html += `
+                        <div class="payment-card">
+                            <div class="payment-header">
+                                <span class="payment-id">${s.username}</span>
+                                <span class="payment-status status-approved">${s.unlocked_depts?.length || 0} የተከፈቱ</span>
+                            </div>
+                            <div class="payment-detail"><strong>ኢሜይል:</strong> ${s.email}</div>
+                            <div class="payment-detail"><strong>ተመዝግቧል:</strong> ${new Date(s.registeredAt).toLocaleDateString()}</div>
+                            <div class="payment-detail"><strong>የተከፈቱ ዲፓርትመንቶች:</strong> ${s.unlocked_depts?.join(', ') || 'ምንም'}</div>
+                        </div>
+                    `;
+                });
+                
+                document.getElementById('students-list').innerHTML = html || '<div class="list-item">ምንም ተማሪ የለም</div>';
+            } catch (error) {
+                console.error('Error loading students:', error);
+            }
+        }
+
+        loadDepts();
+    </script>
+</body>
+</html>
