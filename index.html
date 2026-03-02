@@ -4,126 +4,904 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ethio Exit Master - የመውጫ ፈተና ዝግጅት</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        /* Copy all styles from studentHtml section in your worker */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --orange: #f97316;
+            --dark: #1e293b;
+            --dark-light: #334155;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --gray-light: #e2e8f0;
+            --white: #ffffff;
+            
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea08 0%, #764ba208 100%);
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
             min-height: 100vh;
         }
-        .container {
+
+        /* Navbar */
+        .navbar {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 16px 24px;
+        }
+
+        .nav-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
-        }
-        .header {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            gap: 16px;
         }
-        .logo h1 {
-            color: #667eea;
+
+        .nav-logo h2 {
             font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .nav-buttons {
+
+        .nav-links {
             display: flex;
-            gap: 10px;
+            gap: 24px;
+            align-items: center;
+            flex-wrap: wrap;
         }
-        .btn {
-            padding: 10px 20px;
-            border-radius: 10px;
-            border: none;
-            cursor: pointer;
+
+        .nav-link {
+            color: var(--dark);
+            text-decoration: none;
             font-weight: 600;
-            transition: all 0.3s;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            border-radius: 40px;
+            transition: var(--transition);
+            cursor: pointer;
         }
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        .nav-link:hover {
+            background: var(--light);
+            color: var(--primary);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            color: var(--primary);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-auth {
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-login {
+            background: var(--light);
+            color: var(--primary);
+            border: 1px solid var(--gray-light);
+        }
+
+        .btn-login:hover {
+            background: var(--primary);
             color: white;
         }
-        .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
+
+        .btn-register {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
         }
-        .hero {
-            background: white;
-            border-radius: 30px;
-            padding: 60px;
-            text-align: center;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
         }
-        .hero h1 {
-            font-size: 48px;
-            color: #333;
-            margin-bottom: 20px;
+
+        .btn-logout {
+            background: var(--danger);
+            color: white;
         }
-        .hero p {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 30px;
+
+        .btn-logout:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
         }
-        .stats {
+
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 24px 40px;
+        }
+
+        /* Breadcrumbs */
+        .breadcrumbs {
             display: flex;
-            justify-content: center;
-            gap: 50px;
-            margin-top: 40px;
-        }
-        .stat {
-            text-align: center;
-        }
-        .stat-number {
-            font-size: 36px;
-            font-weight: bold;
-            color: #667eea;
-        }
-        .stat-label {
-            color: #666;
-        }
-        .question-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 40px;
-        }
-        .card {
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            padding: 12px 16px;
             background: white;
-            border-radius: 20px;
-            padding: 30px;
+            border-radius: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .breadcrumb-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray);
+            font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid transparent;
+            transition: var(--transition);
         }
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: #667eea;
-            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
+
+        .breadcrumb-item:hover {
+            color: var(--primary);
         }
-        .card.model { border-top: 4px solid #f59e0b; }
-        .card.exit { border-top: 4px solid #ef4444; }
-        .card-icon { font-size: 48px; margin-bottom: 15px; }
-        .card h3 { font-size: 20px; margin-bottom: 10px; }
-        .card p { color: #666; margin-bottom: 15px; }
-        .card-badge {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
+
+        .breadcrumb-item.active {
+            color: var(--dark);
             font-weight: 600;
         }
-        .badge-model { background: #fef3c7; color: #f59e0b; }
-        .badge-exit { background: #fee2e2; color: #ef4444; }
+
+        .breadcrumb-separator {
+            color: var(--gray-light);
+            font-size: 14px;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 32px;
+            padding: 60px 48px;
+            color: white;
+            margin-bottom: 48px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-section h1 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .hero-section p {
+            font-size: 18px;
+            opacity: 0.95;
+            max-width: 600px;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 32px;
+            margin-top: 32px;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-number {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .hero-stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Departments Section */
+        .departments-section {
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .departments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .department-card {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .department-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .department-card.locked {
+            opacity: 0.8;
+            filter: grayscale(0.3);
+        }
+
+        .department-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .department-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .department-card p {
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .department-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--gray-light);
+            padding-top: 16px;
+        }
+
+        .course-count {
+            background: var(--light);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .dept-badge {
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .badge-free {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .badge-paid {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-unlocked {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .lock-overlay {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--danger);
+            color: white;
+            padding: 8px 16px;
+            border-bottom-left-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Courses Section */
+        .courses-section {
+            margin-top: 32px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--light);
+            border: 1px solid var(--gray-light);
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 24px;
+            transition: var(--transition);
+        }
+
+        .back-button:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .course-card:hover {
+            border-color: var(--secondary);
+            transform: translateY(-4px);
+        }
+
+        .course-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .course-card h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .course-card p {
+            color: var(--gray);
+            font-size: 13px;
+        }
+
+        /* Chapters Section */
+        .chapters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .chapter-card {
+            background: var(--light);
+            border-radius: 16px;
+            padding: 16px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .chapter-card:hover {
+            background: white;
+            box-shadow: var(--card-shadow);
+            transform: translateX(4px);
+        }
+
+        .chapter-card h5 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Study Section */
+        .study-section {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .study-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--gray-light);
+            background: white;
+            transition: var(--transition);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .study-content {
+            display: none;
+        }
+
+        .study-content.active {
+            display: block;
+        }
+
+        .note-content {
+            line-height: 1.8;
+            color: var(--dark);
+        }
+
+        .note-content h3 {
+            margin: 16px 0 8px;
+        }
+
+        .quiz-option {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            margin: 8px 0;
+            border: 2px solid var(--gray-light);
+            border-radius: 12px;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .quiz-option:hover {
+            border-color: var(--primary);
+            background: var(--light);
+        }
+
+        .quiz-option.correct {
+            background: #d1fae5;
+            border-color: #10b981;
+        }
+
+        .quiz-option.wrong {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+
+        .explanation {
+            background: #e3f2fd;
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 16px;
+            border-left: 4px solid var(--primary);
+        }
+
+        /* Question Cards */
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .question-card.model:hover {
+            border-color: var(--orange);
+            transform: translateY(-4px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .question-card.exit:hover {
+            border-color: var(--danger);
+            transform: translateY(-4px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .question-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .question-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .question-card p {
+            color: var(--gray);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--gray-light);
+            padding-top: 16px;
+        }
+
+        .question-count {
+            background: var(--light);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .question-badge {
+            padding: 6px 12px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .badge-model {
+            background: #ffedd5;
+            color: var(--orange);
+        }
+
+        .badge-exit {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin: 48px 0;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            border: 1px solid var(--gray-light);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+
+        .feature-card h4 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            color: var(--gray);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Steps Section */
+        .steps-section {
+            background: white;
+            border-radius: 32px;
+            padding: 48px;
+            margin: 48px 0;
+            box-shadow: var(--card-shadow);
+        }
+
+        .steps-section h3 {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 32px;
+        }
+
+        .step-item {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 32px;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        .step-content p {
+            font-size: 16px;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            background: white;
+            border-radius: 32px;
+            padding: 48px;
+            margin: 48px 0;
+            box-shadow: var(--card-shadow);
+        }
+
+        .faq-section h3 {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 32px;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--gray-light);
+            padding: 24px 0;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .faq-answer {
+            font-size: 16px;
+            color: var(--gray);
+            line-height: 1.6;
+            padding-left: 32px;
+        }
+
+        /* About Section */
+        .about-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 32px;
+            padding: 48px;
+            margin: 48px 0;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+            animation: rotate 30s linear infinite;
+        }
+
+        .about-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .about-section h3 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 24px;
+        }
+
+        .about-section p {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 24px;
+            opacity: 0.95;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: white;
+            border-radius: 32px;
+            padding: 48px;
+            margin: 48px 0;
+            box-shadow: var(--card-shadow);
+        }
+
+        .contact-section h3 {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 32px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 20px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .contact-item:hover {
+            background: white;
+            box-shadow: var(--card-shadow);
+            transform: translateY(-2px);
+        }
+
+        .contact-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .contact-info h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--dark);
+        }
+
+        .contact-info p {
+            font-size: 15px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* CTA Button */
+        .cta-button {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 60px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 30px -5px rgba(37, 99, 235, 0.4);
+        }
+
+        .cta-button.small {
+            padding: 12px 24px;
+            font-size: 16px;
+        }
+
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -131,234 +909,1271 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            z-index: 2000;
+            padding: 20px;
+            backdrop-filter: blur(5px);
         }
-        .modal.active { display: flex; }
+
+        .modal.active {
+            display: flex;
+        }
+
         .modal-content {
             background: white;
-            border-radius: 20px;
-            padding: 30px;
+            border-radius: 32px;
+            padding: 32px;
             max-width: 800px;
-            width: 90%;
+            width: 100%;
             max-height: 80vh;
             overflow-y: auto;
+            animation: slideUp 0.3s ease;
         }
+
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--gray-light);
         }
+
+        .modal-header h2 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--dark);
+        }
+
         .close-btn {
             background: #fee2e2;
             color: #ef4444;
             border: none;
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            font-size: 18px;
+            font-size: 20px;
             cursor: pointer;
+            transition: var(--transition);
         }
-        .question-item {
-            background: #f9f9f9;
-            border-radius: 10px;
+
+        .close-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .question-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .question-display-item {
+            background: var(--light);
+            border-radius: 20px;
             padding: 20px;
-            margin-bottom: 15px;
+            border: 1px solid var(--gray-light);
         }
-        .options {
+
+        .question-display-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 16px;
+        }
+
+        .options-display {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
         }
-        .option {
-            padding: 10px;
+
+        .option-display {
+            padding: 12px;
             background: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: 12px;
+            border: 1px solid var(--gray-light);
+            font-size: 14px;
         }
-        .correct { color: #10b981; font-weight: bold; }
-        .explanation {
+
+        .correct-answer {
+            background: #d1fae5;
+            color: #10b981;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            margin: 12px 0;
+        }
+
+        .explanation-display {
             background: #e3f2fd;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 10px;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--dark);
+            border-left: 4px solid var(--primary);
         }
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 32px; }
-            .stats { flex-direction: column; gap: 20px; }
+
+        /* File Upload */
+        .file-upload {
+            border: 2px dashed var(--gray-light);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 16px;
         }
-        .error-message {
-            background: #fee2e2;
-            color: #ef4444;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
+
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: var(--light);
+        }
+
+        .file-upload input {
             display: none;
         }
-        .form-input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+
+        .upload-preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 12px;
+            margin-top: 12px;
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--gray-light);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Payment Status */
+        .payment-status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #f59e0b;
+        }
+
+        .status-approved {
+            background: #d1fae5;
+            color: #10b981;
+        }
+
+        .status-rejected {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 20px 0;
+            }
+            
+            .nav-links.show {
+                display: flex;
+            }
+            
+            .nav-link {
+                width: 100%;
+            }
+            
+            .auth-buttons {
+                width: 100%;
+            }
+            
+            .btn-auth {
+                flex: 1;
+                text-align: center;
+            }
+            
+            .hero-section {
+                padding: 40px 24px;
+            }
+            
+            .hero-section h1 {
+                font-size: 32px;
+            }
+            
+            .hero-stats {
+                flex-wrap: wrap;
+                gap: 16px;
+            }
+            
+            .steps-section,
+            .faq-section,
+            .about-section,
+            .contact-section {
+                padding: 32px 24px;
+            }
+            
+            .step-item {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .departments-grid,
+            .courses-grid,
+            .chapters-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="logo">
-                <h1>🎓 Ethio Exit Master</h1>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>🎓 Ethio Exit Master</h2>
             </div>
-            <div class="nav-buttons">
-                <button class="btn btn-secondary" onclick="openLoginModal()">🔑 ግባ</button>
-                <button class="btn btn-primary" onclick="openRegisterModal()">📝 ተመዝገብ</button>
-            </div>
-        </div>
-
-        <div class="hero">
-            <h1>እንኳን ወደ Ethio Exit Master በሰላም መጡ</h1>
-            <p>የዩኒቨርሲቲ የመውጫ ፈተናን በልበ ሙሉነት ይለፉ!</p>
-            <div class="stats" id="stats">
-                <div class="stat">
-                    <div class="stat-number">15+</div>
-                    <div class="stat-label">ኮርሶች</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number" id="modelCount">0</div>
-                    <div class="stat-label">የሞዴል ጥያቄዎች</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number" id="exitCount">0</div>
-                    <div class="stat-label">የExit ጥያቄዎች</div>
+            
+            <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
+            
+            <div class="nav-links" id="navLinks">
+                <a class="nav-link active" onclick="showSection('home')">🏠 መነሻ</a>
+                <a class="nav-link" onclick="showSection('departments')">📚 ዲፓርትመንቶች</a>
+                <a class="nav-link" onclick="showSection('model')">📋 ሞዴል ፈተና</a>
+                <a class="nav-link" onclick="showSection('exit')">🎯 Exit Exam</a>
+                <a class="nav-link" onclick="showSection('about')">ℹ️ ስለኛ</a>
+                <a class="nav-link" onclick="showSection('contact')">📞 አድራሻ</a>
+                <a class="nav-link" onclick="showSection('payments')" id="paymentsLink" style="display:none;">💰 ክፍያዎቼ</a>
+                
+                <div class="auth-buttons" id="authButtons">
+                    <button class="btn-auth btn-login" onclick="openLoginModal()">🔑 ግባ</button>
+                    <button class="btn-auth btn-register" onclick="openRegisterModal()">📝 ተመዝገብ</button>
                 </div>
             </div>
-        </div>
-
-        <div class="question-cards">
-            <div class="card model" onclick="loadModelQuestions()">
-                <div class="card-icon">📋</div>
-                <h3>የሞዴል ፈተና ጥያቄዎች</h3>
-                <p>ለመውጫ ፈተና ዝግጅት የሞዴል ጥያቄዎችን ይለማመዱ</p>
-                <span class="card-badge badge-model" id="modelCount2">በመጫን ላይ...</span>
-            </div>
-            <div class="card exit" onclick="loadExitQuestions()">
-                <div class="card-icon">🎯</div>
-                <h3>የ Exit Exam ጥያቄዎች</h3>
-                <p>100+ የ Exit Exam ጥያቄዎችን ይለማመዱ</p>
-                <span class="card-badge badge-exit" id="exitCount2">በመጫን ላይ...</span>
-            </div>
-        </div>
-        
-        <div style="text-align: center; margin-top: 20px;">
-            <a href="/admin-login.html" style="color: white; text-decoration: none;">🔐 አስተዳዳሪ</a>
         </div>
     </div>
 
-    <!-- Login Modal -->
-    <div class="modal" id="loginModal">
+    <!-- Breadcrumbs -->
+    <div class="main-container">
+        <div class="breadcrumbs" id="breadcrumbs">
+            <span class="breadcrumb-item active" onclick="navigateBreadcrumb('home')">🏠 መነሻ</span>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container" id="mainContainer">
+        <!-- Home Section -->
+        <div id="homeSection">
+            <!-- Hero Section -->
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h1>እንኳን ወደ Ethio Exit Master በሰላም መጣችሁ!</h1>
+                    <p>የዩኒቨርሲቲ የመውጫ ፈተናን (Exit Exam) በልበ ሙሉነት ይለፉ! የ 15+ ኮርሶችን የተንዛዙ ሞጁሎች እና የፈተና ጭንቀትን እርግፍ አድርገው ይተው።</p>
+                    
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <div class="hero-stat-number">15+</div>
+                            <div class="hero-stat-label">ኮርሶች</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-number">100+</div>
+                            <div class="hero-stat-label">ጥያቄዎች</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-number">24/7</div>
+                            <div class="hero-stat-label">ክፍት</div>
+                        </div>
+                    </div>
+                    
+                    <button class="cta-button" onclick="showSection('departments')" style="margin-top: 32px;">
+                        📚 ዲፓርትመንቶችን ይመልከቱ
+                    </button>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">✂️</div>
+                    <h4>Bite-Sized Notes</h4>
+                    <p>ሰፊውን ሞጁል ወደ አጫጭር እና ግልፅ ማስታወሻዎች ቀይረናል።</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h4>Chapter Quizzes</h4>
+                    <p>እያንዳንዱን ምዕራፍ አንብበው ግንዛቤዎን ይፈትኑ።</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h4>Mock Exams</h4>
+                    <p>ልክ እንደ ትምህርት ሚኒስቴር ፈተና 100 ጥያቄዎች።</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h4>Access Anywhere</h4>
+                    <p>በማንኛውም ጊዜ፣ በየትኛውም ቦታ ያጥኑ።</p>
+                </div>
+            </div>
+
+            <!-- Steps -->
+            <div class="steps-section">
+                <h3>📋 እንዴት ነው የሚሰራው? (3 ቀላል ደረጃዎች)</h3>
+                
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>ዲፓርትመንትዎን ይምረጡ</h4>
+                        <p>የሚያጠኑትን ዲፓርትመንት እና ኮርስ ይምረጡ።</p>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>አጫጭር ማስታወሻዎችን ያንብቡ</h4>
+                        <p>የየምዕራፉን ማስታወሻዎች ያንብቡ እና ጥያቄዎችን ይስሩ።</p>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>ሞዴል ፈተና ይውሰዱ</h4>
+                        <p>ውጤትዎን እና ማብራሪያውን ይመልከቱ!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ -->
+            <div class="faq-section">
+                <h3>❓ ተደጋግመው የሚነሱ ጥያቄዎች</h3>
+                
+                <div class="faq-item">
+                    <div class="faq-question">ሁሉም ዲፓርትመንቶች አሉ?</div>
+                    <div class="faq-answer">በአሁኑ ሰዓት ለ Governance እና ለሌሎችም ዋና ዋና ዲፓርትመንቶች ዝግጅታችንን አጠናቀናል፤ በየጊዜው አዳዲስ ዲፓርትመንቶችን እንጨምራለን።</div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">ሞዴል ፈተናዎቹ የትምህርት ሚኒስቴርን መለኪያ የተከተሉ ናቸው?</div>
+                    <div class="faq-answer">አዎ! ፈተናዎቻችን እና ማስታወሻዎቻችን ሙሉ በሙሉ በሚኒስቴሩ ብሉፕሪንት ላይ የተመሰረቱ ናቸው።</div>
+                </div>
+            </div>
+
+            <!-- About -->
+            <div class="about-section">
+                <div class="about-content">
+                    <h3>📖 ስለኛ</h3>
+                    <p>Ethio Exit Master የተመሰረተው የዩኒቨርሲቲ ተማሪዎችን የመውጫ ፈተና ጫና እና ጭንቀት ከስር መሰረቱ ለመፍታት በማሰብ ነው። ዋነኛ ግባችን እያንዳንዱ የኢትዮጵያ ዩኒቨርሲቲ ተማሪ ያለምንም ፍርሃት ፈተናውን በከፍተኛ ውጤት አልፎ የምረቃው ደስታ ተካፋይ እንዲሆን ማድረግ ነው!</p>
+                    
+                    <button class="cta-button" onclick="scrollToContact()">
+                        📞 ያግኙን
+                    </button>
+                </div>
+            </div>
+
+            <!-- Contact -->
+            <div class="contact-section" id="contactSection">
+                <h3>📞 አድራሻችን</h3>
+                
+                <div class="contact-grid">
+                    <div class="contact-item" onclick="window.location.href='tel:+25193979082'">
+                        <div class="contact-icon">📱</div>
+                        <div class="contact-info">
+                            <h4>ስልክ ጥሪ</h4>
+                            <p>093979082</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item" onclick="window.open('https://t.me/ethioexitmaster', '_blank')">
+                        <div class="contact-icon">📨</div>
+                        <div class="contact-info">
+                            <h4>ቴሌግራም</h4>
+                            <p>@ethioexitmaster</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item" onclick="window.location.href='mailto:ethioexitmasterforall@gmail.com'">
+                        <div class="contact-icon">✉️</div>
+                        <div class="contact-info">
+                            <h4>ኢሜይል</h4>
+                            <p>ethioexitmasterforall@gmail.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Departments Section -->
+        <div id="departmentsSection" style="display: none;">
+            <div class="departments-section">
+                <h2 class="section-title">
+                    <span>🏛️</span> ዲፓርትመንቶች
+                </h2>
+                
+                <div class="departments-grid" id="departmentsGrid">
+                    <div class="loading" style="margin: 0 auto;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Courses Section -->
+        <div id="coursesSection" style="display: none;">
+            <button class="back-button" onclick="showDepartments()">
+                <span>←</span> ወደ ዲፓርትመንቶች ተመለስ
+            </button>
+            
+            <h2 class="section-title" id="deptName">📚 ኮርሶች</h2>
+            
+            <div class="courses-grid" id="coursesGrid">
+                <div class="loading" style="margin: 0 auto;"></div>
+            </div>
+        </div>
+
+        <!-- Chapters Section -->
+        <div id="chaptersSection" style="display: none;">
+            <button class="back-button" onclick="showCourses()">
+                <span>←</span> ወደ ኮርሶች ተመለስ
+            </button>
+            
+            <h2 class="section-title" id="courseName">📑 ቻፕተሮች</h2>
+            
+            <div class="chapters-grid" id="chaptersGrid">
+                <div class="loading" style="margin: 0 auto;"></div>
+            </div>
+        </div>
+
+        <!-- Study Section -->
+        <div id="studySection" style="display: none;">
+            <button class="back-button" onclick="showChapters()">
+                <span>←</span> ወደ ቻፕተሮች ተመለስ
+            </button>
+            
+            <div class="study-section">
+                <h2 class="section-title" id="chapterName">📖 የቻፕተር ጥናት</h2>
+                
+                <div class="study-tabs">
+                    <button class="tab-btn active" onclick="switchTab('fullNote')">📚 ሙሉ ኖት</button>
+                    <button class="tab-btn" onclick="switchTab('shortNote')">⚡ አጭር ኖት</button>
+                    <button class="tab-btn" onclick="switchTab('quiz')">✍️ ጥያቄዎች</button>
+                </div>
+                
+                <div id="fullNote" class="study-content active">
+                    <div class="note-content" id="fullNoteContent"></div>
+                </div>
+                
+                <div id="shortNote" class="study-content">
+                    <div class="note-content" id="shortNoteContent"></div>
+                </div>
+                
+                <div id="quiz" class="study-content">
+                    <div id="quizContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Model Questions Section -->
+        <div id="modelQuestionsSection" style="display: none;">
+            <div class="student-questions-section">
+                <h2 class="section-title">
+                    <span>📋</span> የሞዴል ፈተና ጥያቄዎች
+                </h2>
+                
+                <div class="question-grid">
+                    <div class="question-card model" onclick="loadModelQuestions()">
+                        <div class="question-icon">📋</div>
+                        <h3>የሞዴል ፈተና ጥያቄዎች</h3>
+                        <p>በአስተዳዳሪ የተጫኑ የሞዴል ፈተና ጥያቄዎችን ይለማመዱ</p>
+                        <div class="question-meta">
+                            <span class="question-count" id="modelCount">0 ጥያቄዎች</span>
+                            <span class="question-badge badge-model">የሞዴል</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exit Questions Section -->
+        <div id="exitQuestionsSection" style="display: none;">
+            <div class="student-questions-section">
+                <h2 class="section-title">
+                    <span>🎯</span> የ 100 Exit Exam ጥያቄዎች
+                </h2>
+                
+                <div class="question-grid">
+                    <div class="question-card exit" onclick="loadExitQuestions()">
+                        <div class="question-icon">🎯</div>
+                        <h3>የ 100 Exit Exam ጥያቄዎች</h3>
+                        <p>ለ Exit Exam ዝግጅት 100 ጥያቄዎችን ይለማመዱ</p>
+                        <div class="question-meta">
+                            <span class="question-count" id="exitCount">0 ጥያቄዎች</span>
+                            <span class="question-badge badge-exit">Exit Exam</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payments Section -->
+        <div id="paymentsSection" style="display: none;">
+            <div class="payments-section">
+                <h2 class="section-title">
+                    <span>💰</span> የክፍያ ታሪኬ
+                </h2>
+                
+                <div id="paymentsList" class="payments-list">
+                    <div class="loading" style="margin: 0 auto;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="questionsModal">
         <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">📋 የሞዴል ፈተና ጥያቄዎች</h2>
+                <button class="close-btn" onclick="closeModal()">✕</button>
+            </div>
+            <div class="question-list" id="questionList"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="paymentModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>💰 ክፍያ ያስፈልጋል</h2>
+                <button class="close-btn" onclick="closePaymentModal()">✕</button>
+            </div>
+            <div style="padding: 20px;">
+                <p style="margin-bottom: 20px;">ይህን ዲፓርትመንት ለመክፈት 150 ብር ያስፈልጋል።</p>
+                
+                <div style="background: #f3f4f6; padding: 16px; border-radius: 12px; margin-bottom: 16px;">
+                    <p><strong>Telebirr:</strong> 09339700482</p>
+                    <p><strong>CBE:</strong> 10000528736576</p>
+                </div>
+                
+                <div class="file-upload" onclick="document.getElementById('paymentScreenshot').click()">
+                    <input type="file" id="paymentScreenshot" accept="image/*" onchange="previewScreenshot(this)">
+                    <span>📸 የክፍያ ማስረጃ ስክሪንሾት ይምረጡ</span>
+                    <img id="screenshotPreview" class="upload-preview" style="display:none;">
+                </div>
+                
+                <input type="text" id="paymentRef" class="form-input" placeholder="ክፍያ ማጣቀሻ" style="width:100%; margin-bottom:12px;">
+                <textarea id="paymentProof" class="form-input" placeholder="ማስረጃ ጽሑፍ (አማራጭ)" rows="3" style="width:100%; margin-bottom:12px;"></textarea>
+                
+                <button class="cta-button" onclick="submitPayment()" style="width:100%;">ክፍያ አስገባ</button>
+                <div id="paymentMessage" style="margin-top:16px; display:none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="loginModal">
+        <div class="modal-content" style="max-width: 400px;">
             <div class="modal-header">
                 <h2>🔑 ይግቡ</h2>
                 <button class="close-btn" onclick="closeLoginModal()">✕</button>
             </div>
-            <input type="text" id="loginUsername" class="form-input" placeholder="የተጠቃሚ ስም">
-            <input type="password" id="loginPassword" class="form-input" placeholder="የይለፍ ቃል">
-            <button class="btn btn-primary" style="width:100%;" onclick="studentLogin()">ግባ</button>
-            <div id="loginMessage" class="error-message"></div>
+            <div style="padding: 20px 0;">
+                <input type="text" id="loginUsername" placeholder="የተጠቃሚ ስም" style="width:100%; padding:14px; margin-bottom:16px; border:2px solid var(--gray-light); border-radius:12px;">
+                <input type="password" id="loginPassword" placeholder="የይለፍ ቃል" style="width:100%; padding:14px; margin-bottom:16px; border:2px solid var(--gray-light); border-radius:12px;">
+                <button class="cta-button" onclick="studentLogin()" style="width:100%;">ግባ</button>
+                <div id="loginMessage" style="margin-top:16px; color:var(--danger); display:none;"></div>
+            </div>
         </div>
     </div>
 
-    <!-- Register Modal -->
     <div class="modal" id="registerModal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 400px;">
             <div class="modal-header">
                 <h2>📝 ይመዝገቡ</h2>
                 <button class="close-btn" onclick="closeRegisterModal()">✕</button>
             </div>
-            <input type="text" id="regUsername" class="form-input" placeholder="የተጠቃሚ ስም">
-            <input type="email" id="regEmail" class="form-input" placeholder="ኢሜይል">
-            <input type="password" id="regPassword" class="form-input" placeholder="የይለፍ ቃል">
-            <button class="btn btn-primary" style="width:100%;" onclick="studentRegister()">ተመዝገብ</button>
-            <div id="registerMessage" class="error-message"></div>
-        </div>
-    </div>
-
-    <!-- Questions Modal -->
-    <div class="modal" id="questionsModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle">📋 ጥያቄዎች</h2>
-                <button class="close-btn" onclick="closeQuestionsModal()">✕</button>
+            <div style="padding: 20px 0;">
+                <input type="text" id="regUsername" placeholder="የተጠቃሚ ስም" style="width:100%; padding:14px; margin-bottom:16px; border:2px solid var(--gray-light); border-radius:12px;">
+                <input type="email" id="regEmail" placeholder="ኢሜይል" style="width:100%; padding:14px; margin-bottom:16px; border:2px solid var(--gray-light); border-radius:12px;">
+                <input type="password" id="regPassword" placeholder="የይለፍ ቃል" style="width:100%; padding:14px; margin-bottom:16px; border:2px solid var(--gray-light); border-radius:12px;">
+                <button class="cta-button" onclick="studentRegister()" style="width:100%;">ተመዝገብ</button>
+                <div id="registerMessage" style="margin-top:16px; color:var(--danger); display:none;"></div>
             </div>
-            <div id="questionList"></div>
         </div>
     </div>
 
     <script>
-        // ✅ በጣም አስፈላጊ - የእርስዎን Worker URL እዚህ ያስገቡ
-        const API_URL = 'https://flat-mud-a477.codeofsaladin.workers.dev'; // ይህን ይቀይሩ
+        // API Base URL - CHANGE THIS TO YOUR CLOUDFLARE WORKER URL
+        const API_BASE = 'https://your-worker.workers.dev';
         
-        // ለማረጋገጫ ኮንሶል ላይ ያሳይ
-        console.log('API URL:', API_URL);
+        // State
+        let isLoggedIn = false;
+        let currentUser = null;
+        let modelQuestions = [];
+        let exitQuestions = [];
+        let departments = [];
+        let unlockedDepts = [];
+        let currentDept = null;
+        let currentCourse = null;
+        let currentChapter = null;
+        let paymentScreenshot = null;
+        
+        // Breadcrumb state
+        let breadcrumbPath = [
+            { name: '🏠 መነሻ', section: 'home' }
+        ];
 
-        // Modal Functions
+        // Helper function for fetch with API base
+        async function apiFetch(endpoint, options = {}) {
+            const url = endpoint.startsWith('http') ? endpoint : API_BASE + endpoint;
+            return fetch(url, {
+                ...options,
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                }
+            });
+        }
+
+        // Toggle mobile menu
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('show');
+        }
+
+        // Update breadcrumbs
+        function updateBreadcrumbs() {
+            const breadcrumbsDiv = document.getElementById('breadcrumbs');
+            let html = '';
+            
+            breadcrumbPath.forEach((item, index) => {
+                if (index > 0) {
+                    html += '<span class="breadcrumb-separator">›</span>';
+                }
+                
+                const activeClass = index === breadcrumbPath.length - 1 ? 'active' : '';
+                html += `<span class="breadcrumb-item ${activeClass}" onclick="navigateBreadcrumb('${item.section}', ${index})">${item.name}</span>`;
+            });
+            
+            breadcrumbsDiv.innerHTML = html;
+        }
+
+        // Navigate via breadcrumb
+        function navigateBreadcrumb(section, index) {
+            if (section === 'home') {
+                showSection('home');
+            } else if (section === 'departments') {
+                showSection('departments');
+            } else if (section === 'courses') {
+                showCourses();
+            } else if (section === 'chapters') {
+                showChapters();
+            } else if (section === 'study') {
+                showStudy();
+            }
+            
+            breadcrumbPath = breadcrumbPath.slice(0, index + 1);
+            updateBreadcrumbs();
+        }
+
+        // Show section
+        function showSection(section) {
+            const activeLink = event?.currentTarget;
+            if (activeLink) {
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                activeLink.classList.add('active');
+            }
+            
+            document.getElementById('homeSection').style.display = 'none';
+            document.getElementById('departmentsSection').style.display = 'none';
+            document.getElementById('coursesSection').style.display = 'none';
+            document.getElementById('chaptersSection').style.display = 'none';
+            document.getElementById('studySection').style.display = 'none';
+            document.getElementById('modelQuestionsSection').style.display = 'none';
+            document.getElementById('exitQuestionsSection').style.display = 'none';
+            document.getElementById('paymentsSection').style.display = 'none';
+            
+            if (section === 'home') {
+                document.getElementById('homeSection').style.display = 'block';
+                breadcrumbPath = [{ name: '🏠 መነሻ', section: 'home' }];
+            } else if (section === 'departments') {
+                document.getElementById('departmentsSection').style.display = 'block';
+                breadcrumbPath = [
+                    { name: '🏠 መነሻ', section: 'home' },
+                    { name: '📚 ዲፓርትመንቶች', section: 'departments' }
+                ];
+                loadDepartments();
+            } else if (section === 'model') {
+                document.getElementById('modelQuestionsSection').style.display = 'block';
+                breadcrumbPath = [
+                    { name: '🏠 መነሻ', section: 'home' },
+                    { name: '📋 ሞዴል ፈተና', section: 'model' }
+                ];
+                loadModelCount();
+            } else if (section === 'exit') {
+                document.getElementById('exitQuestionsSection').style.display = 'block';
+                breadcrumbPath = [
+                    { name: '🏠 መነሻ', section: 'home' },
+                    { name: '🎯 Exit Exam', section: 'exit' }
+                ];
+                loadExitCount();
+            } else if (section === 'payments') {
+                document.getElementById('paymentsSection').style.display = 'block';
+                breadcrumbPath = [
+                    { name: '🏠 መነሻ', section: 'home' },
+                    { name: '💰 ክፍያዎቼ', section: 'payments' }
+                ];
+                loadPayments();
+            } else if (section === 'about') {
+                document.getElementById('homeSection').style.display = 'block';
+                document.querySelector('.about-section').scrollIntoView({ behavior: 'smooth' });
+            } else if (section === 'contact') {
+                document.getElementById('homeSection').style.display = 'block';
+                document.getElementById('contactSection').scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            updateBreadcrumbs();
+            document.getElementById('navLinks').classList.remove('show');
+        }
+
+        // Load Departments
+        async function loadDepartments() {
+            try {
+                const res = await apiFetch('/api/depts');
+                const data = await res.json();
+                departments = data.depts;
+                unlockedDepts = data.unlocked || [];
+                
+                const grid = document.getElementById('departmentsGrid');
+                
+                if (departments.length === 0) {
+                    grid.innerHTML = '<div class="no-data">ምንም ዲፓርትመንት የለም</div>';
+                    return;
+                }
+                
+                let html = '';
+                departments.forEach(dept => {
+                    const isLocked = dept.is_paid && !unlockedDepts.includes(dept.id);
+                    const lockedClass = isLocked ? 'locked' : '';
+                    
+                    html += `
+                        <div class="department-card ${lockedClass}" onclick="selectDepartment('${dept.id}')">
+                            ${isLocked ? '<div class="lock-overlay">🔒 የተቆለፈ</div>' : ''}
+                            <div class="department-icon">🏛️</div>
+                            <h3>${dept.name}</h3>
+                            <p>${dept.is_paid ? 'የሚከፈልበት ዲፓርትመንት' : 'ነፃ ዲፓርትመንት'}</p>
+                            <div class="department-meta">
+                                <span class="course-count" id="courseCount-${dept.id}">⏳ በመጫን ላይ...</span>
+                                <span class="dept-badge ${dept.is_paid ? (unlockedDepts.includes(dept.id) ? 'badge-unlocked' : 'badge-paid') : 'badge-free'}">
+                                    ${dept.is_paid ? (unlockedDepts.includes(dept.id) ? '✅ ተከፍቷል' : '💰 የሚከፈል') : '🆓 ነፃ'}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                grid.innerHTML = html;
+                
+                departments.forEach(dept => {
+                    loadCourseCount(dept.id);
+                });
+                
+            } catch (error) {
+                console.error('Error loading departments:', error);
+            }
+        }
+
+        // Load course count
+        async function loadCourseCount(deptId) {
+            try {
+                const res = await apiFetch('/api/courses?dept=' + deptId);
+                const courses = await res.json();
+                document.getElementById('courseCount-' + deptId).textContent = courses.length + ' ኮርሶች';
+            } catch (error) {
+                console.error('Error loading course count:', error);
+            }
+        }
+
+        // Select department
+        async function selectDepartment(deptId) {
+            const dept = departments.find(d => d.id === deptId);
+            
+            if (dept.is_paid && !unlockedDepts.includes(deptId)) {
+                if (!isLoggedIn) {
+                    alert('እባክዎ መጀመሪያ ይግቡ');
+                    openLoginModal();
+                    return;
+                }
+                openPaymentModal(dept);
+                return;
+            }
+            
+            currentDept = dept;
+            
+            try {
+                const res = await apiFetch('/api/courses?dept=' + deptId);
+                const courses = await res.json();
+                
+                document.getElementById('deptName').innerHTML = '📚 ' + dept.name + ' - ኮርሶች';
+                
+                const grid = document.getElementById('coursesGrid');
+                
+                if (courses.length === 0) {
+                    grid.innerHTML = '<div class="no-data">ምንም ኮርስ የለም</div>';
+                } else {
+                    let html = '';
+                    courses.forEach(course => {
+                        html += `
+                            <div class="course-card" onclick="selectCourse('${course.id}', '${course.name}')">
+                                <div class="course-icon">📘</div>
+                                <h4>${course.name}</h4>
+                                <p>ይህን ኮርስ ይምረጡ ቻፕተሮችን ለማየት</p>
+                            </div>
+                        `;
+                    });
+                    grid.innerHTML = html;
+                }
+                
+                breadcrumbPath = [
+                    { name: '🏠 መነሻ', section: 'home' },
+                    { name: '📚 ዲፓርትመንቶች', section: 'departments' },
+                    { name: dept.name, section: 'courses' }
+                ];
+                updateBreadcrumbs();
+                
+                document.getElementById('homeSection').style.display = 'none';
+                document.getElementById('departmentsSection').style.display = 'none';
+                document.getElementById('coursesSection').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error loading courses:', error);
+            }
+        }
+
+        // Select course
+        async function selectCourse(courseId, courseName) {
+            currentCourse = { id: courseId, name: courseName };
+            
+            try {
+                const res = await apiFetch('/api/chapters?course=' + courseId);
+                const chapters = await res.json();
+                
+                document.getElementById('courseName').innerHTML = '📑 ' + courseName + ' - ቻፕተሮች';
+                
+                const grid = document.getElementById('chaptersGrid');
+                
+                if (chapters.length === 0) {
+                    grid.innerHTML = '<div class="no-data">ምንም ቻፕተር የለም</div>';
+                } else {
+                    let html = '';
+                    chapters.forEach(chapter => {
+                        html += `
+                            <div class="chapter-card" onclick="selectChapter('${chapter.id}', '${chapter.name}')">
+                                <h5><span>📄</span> ${chapter.name}</h5>
+                            </div>
+                        `;
+                    });
+                    grid.innerHTML = html;
+                }
+                
+                breadcrumbPath = [
+                    { name: '🏠 መነሻ', section: 'home' },
+                    { name: '📚 ዲፓርትመንቶች', section: 'departments' },
+                    { name: currentDept.name, section: 'courses' },
+                    { name: courseName, section: 'chapters' }
+                ];
+                updateBreadcrumbs();
+                
+                document.getElementById('coursesSection').style.display = 'none';
+                document.getElementById('chaptersSection').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error loading chapters:', error);
+            }
+        }
+
+        // Select chapter
+        async function selectChapter(chapterId, chapterName) {
+            currentChapter = { id: chapterId, name: chapterName };
+            
+            try {
+                const notesRes = await apiFetch('/api/notes?chapter=' + chapterId);
+                const notes = await notesRes.json();
+                
+                const questionsRes = await apiFetch('/api/questions?chapter=' + chapterId);
+                const questions = await questionsRes.json();
+                
+                document.getElementById('chapterName').innerHTML = '📖 ' + chapterName;
+                
+                document.getElementById('fullNoteContent').innerHTML = notes.full_note || 'ማስታወሻ የለም';
+                document.getElementById('shortNoteContent').innerHTML = notes.short_note || 'ማስታወሻ የለም';
+                
+                let quizHtml = '';
+                if (questions.length === 0) {
+                    quizHtml = '<p>ምንም ጥያቄ የለም</p>';
+                } else {
+                    questions.forEach((q, index) => {
+                        quizHtml += `
+                            <div style="margin-bottom: 24px;">
+                                <p style="font-weight: 600; margin-bottom: 12px;">${index + 1}. ${q.question}</p>
+                                <button class="quiz-option" onclick="checkAnswer(this, '${q.correct}', '${q.explanation || ''}')">ሀ) ${q.a}</button>
+                                <button class="quiz-option" onclick="checkAnswer(this, '${q.correct}', '${q.explanation || ''}')">ለ) ${q.b}</button>
+                                <button class="quiz-option" onclick="checkAnswer(this, '${q.correct}', '${q.explanation || ''}')">ሐ) ${q.c}</button>
+                                <button class="quiz-option" onclick="checkAnswer(this, '${q.correct}', '${q.explanation || ''}')">መ) ${q.d}</button>
+                                <div class="explanation" id="exp-${index}" style="display: none;"></div>
+                            </div>
+                        `;
+                    });
+                }
+                document.getElementById('quizContent').innerHTML = quizHtml;
+                
+                breadcrumbPath = [
+                    { name: '🏠 መነሻ', section: 'home' },
+                    { name: '📚 ዲፓርትመንቶች', section: 'departments' },
+                    { name: currentDept.name, section: 'courses' },
+                    { name: currentCourse.name, section: 'chapters' },
+                    { name: chapterName, section: 'study' }
+                ];
+                updateBreadcrumbs();
+                
+                document.getElementById('chaptersSection').style.display = 'none';
+                document.getElementById('studySection').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error loading chapter content:', error);
+            }
+        }
+
+        // Check answer
+        function checkAnswer(btn, correct, explanation) {
+            const parent = btn.parentElement;
+            const options = parent.querySelectorAll('.quiz-option');
+            const expDiv = parent.querySelector('.explanation');
+            
+            options.forEach(opt => {
+                opt.disabled = true;
+                if (opt.textContent.includes(correct + ')')) {
+                    opt.classList.add('correct');
+                }
+            });
+            
+            if (!btn.textContent.includes(correct + ')')) {
+                btn.classList.add('wrong');
+            }
+            
+            expDiv.innerHTML = '💡 ' + (explanation || 'ማብራሪያ የለም');
+            expDiv.style.display = 'block';
+        }
+
+        // Switch tabs
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            document.querySelectorAll('.study-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+        }
+
+        // Navigation functions
+        function showDepartments() {
+            document.getElementById('coursesSection').style.display = 'none';
+            document.getElementById('departmentsSection').style.display = 'block';
+            
+            breadcrumbPath = [
+                { name: '🏠 መነሻ', section: 'home' },
+                { name: '📚 ዲፓርትመንቶች', section: 'departments' }
+            ];
+            updateBreadcrumbs();
+            loadDepartments();
+        }
+
+        function showCourses() {
+            document.getElementById('chaptersSection').style.display = 'none';
+            document.getElementById('coursesSection').style.display = 'block';
+            
+            breadcrumbPath = [
+                { name: '🏠 መነሻ', section: 'home' },
+                { name: '📚 ዲፓርትመንቶች', section: 'departments' },
+                { name: currentDept.name, section: 'courses' }
+            ];
+            updateBreadcrumbs();
+            
+            if (currentDept) {
+                selectDepartment(currentDept.id);
+            }
+        }
+
+        function showChapters() {
+            document.getElementById('studySection').style.display = 'none';
+            document.getElementById('chaptersSection').style.display = 'block';
+            
+            breadcrumbPath = [
+                { name: '🏠 መነሻ', section: 'home' },
+                { name: '📚 ዲፓርትመንቶች', section: 'departments' },
+                { name: currentDept.name, section: 'courses' },
+                { name: currentCourse.name, section: 'chapters' }
+            ];
+            updateBreadcrumbs();
+            
+            if (currentCourse) {
+                selectCourse(currentCourse.id, currentCourse.name);
+            }
+        }
+
+        function showStudy() {
+            document.getElementById('studySection').style.display = 'block';
+            
+            breadcrumbPath = [
+                { name: '🏠 መነሻ', section: 'home' },
+                { name: '📚 ዲፓርትመንቶች', section: 'departments' },
+                { name: currentDept.name, section: 'courses' },
+                { name: currentCourse.name, section: 'chapters' },
+                { name: currentChapter.name, section: 'study' }
+            ];
+            updateBreadcrumbs();
+        }
+
+        // Load Model Questions
+        async function loadModelQuestions() {
+            try {
+                const res = await apiFetch('/api/model-questions');
+                modelQuestions = await res.json();
+                
+                if (modelQuestions.length === 0) {
+                    alert('ምንም የሞዴል ጥያቄዎች የሉም');
+                    return;
+                }
+                
+                displayQuestions(modelQuestions, '📋 የሞዴል ፈተና ጥያቄዎች');
+            } catch (error) {
+                console.error('Error loading model questions:', error);
+            }
+        }
+
+        // Load Exit Questions
+        async function loadExitQuestions() {
+            try {
+                const res = await apiFetch('/api/exit-100-questions');
+                exitQuestions = await res.json();
+                
+                if (exitQuestions.length === 0) {
+                    alert('ምንም የ Exit Exam ጥያቄዎች የሉም');
+                    return;
+                }
+                
+                displayQuestions(exitQuestions, '🎯 የ 100 Exit Exam ጥያቄዎች');
+            } catch (error) {
+                console.error('Error loading exit questions:', error);
+            }
+        }
+
+        // Load model count
+        async function loadModelCount() {
+            try {
+                const res = await apiFetch('/api/model-questions');
+                const data = await res.json();
+                document.getElementById('modelCount').textContent = data.length + ' ጥያቄዎች';
+            } catch (error) {
+                console.error('Error loading model count:', error);
+            }
+        }
+
+        // Load exit count
+        async function loadExitCount() {
+            try {
+                const res = await apiFetch('/api/exit-100-questions');
+                const data = await res.json();
+                document.getElementById('exitCount').textContent = data.length + ' ጥያቄዎች';
+            } catch (error) {
+                console.error('Error loading exit count:', error);
+            }
+        }
+
+        // Load payments
+        async function loadPayments() {
+            document.getElementById('paymentsList').innerHTML = '<div class="list-item">የክፍያ ታሪክ እዚህ ይታያል</div>';
+        }
+
+        // Display Questions in Modal
+        function displayQuestions(questions, title) {
+            const modal = document.getElementById('questionsModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const questionList = document.getElementById('questionList');
+            
+            modalTitle.textContent = title;
+            
+            let html = '';
+            questions.forEach((q, index) => {
+                html += `
+                    <div class="question-display-item">
+                        <div class="question-display-text">${index + 1}. ${q.question}</div>
+                        <div class="options-display">
+                            <div class="option-display">ሀ) ${q.options.A}</div>
+                            <div class="option-display">ለ) ${q.options.B}</div>
+                            <div class="option-display">ሐ) ${q.options.C}</div>
+                            <div class="option-display">መ) ${q.options.D}</div>
+                        </div>
+                        <div class="correct-answer">✅ ትክክለኛ መልስ: ${q.correct}</div>
+                        ${q.explanation ? '<div class="explanation-display">💡 ' + q.explanation + '</div>' : ''}
+                    </div>
+                `;
+            });
+            
+            questionList.innerHTML = html;
+            modal.classList.add('active');
+        }
+
+        // Close Modal
+        function closeModal() {
+            document.getElementById('questionsModal').classList.remove('active');
+        }
+
+        // Payment Modal
+        let pendingDept = null;
+        
+        function openPaymentModal(dept) {
+            pendingDept = dept;
+            document.getElementById('paymentModal').classList.add('active');
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.remove('active');
+            document.getElementById('paymentScreenshot').value = '';
+            document.getElementById('screenshotPreview').style.display = 'none';
+            document.getElementById('paymentRef').value = '';
+            document.getElementById('paymentProof').value = '';
+            document.getElementById('paymentMessage').style.display = 'none';
+        }
+
+        function previewScreenshot(input) {
+            const preview = document.getElementById('screenshotPreview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    paymentScreenshot = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        async function submitPayment() {
+            const ref = document.getElementById('paymentRef').value;
+            const proof = document.getElementById('paymentProof').value;
+            const messageDiv = document.getElementById('paymentMessage');
+            
+            if (!ref) {
+                messageDiv.textContent = 'እባክዎ የክፍያ ማጣቀሻ ያስገቡ';
+                messageDiv.style.display = 'block';
+                messageDiv.style.color = 'var(--danger)';
+                return;
+            }
+            
+            try {
+                const paymentData = {
+                    amount: 150,
+                    method: 'telebirr',
+                    reference: ref,
+                    proof_text: proof || 'ክፍያ ተፈጽሟል',
+                    proof_image_url: paymentScreenshot || '',
+                    dept_id: pendingDept.id
+                };
+                
+                const res = await apiFetch('/api/payments', {
+                    method: 'POST',
+                    body: JSON.stringify(paymentData)
+                });
+                
+                const data = await res.json();
+                
+                if (res.ok) {
+                    messageDiv.innerHTML = '✅ ክፍያ ጥያቄ ተልኳል። በአስተዳዳሪ ይፈቀዳል።';
+                    messageDiv.style.color = 'var(--success)';
+                    messageDiv.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        closePaymentModal();
+                        alert('ክፍያ ጥያቄ ተልኳል። በአስተዳዳሪ ይፈቀዳል።');
+                    }, 2000);
+                } else {
+                    throw new Error(data.error || 'Payment failed');
+                }
+            } catch (error) {
+                messageDiv.textContent = 'ስህተት ተፈጥሯል: ' + error.message;
+                messageDiv.style.color = 'var(--danger)';
+                messageDiv.style.display = 'block';
+            }
+        }
+
+        // Login Modal
         function openLoginModal() {
             document.getElementById('loginModal').classList.add('active');
         }
+
         function closeLoginModal() {
             document.getElementById('loginModal').classList.remove('active');
         }
+
         function openRegisterModal() {
             document.getElementById('registerModal').classList.add('active');
         }
+
         function closeRegisterModal() {
             document.getElementById('registerModal').classList.remove('active');
-        }
-        function closeQuestionsModal() {
-            document.getElementById('questionsModal').classList.remove('active');
         }
 
         // Student Login
         async function studentLogin() {
             const username = document.getElementById('loginUsername').value;
             const password = document.getElementById('loginPassword').value;
-            const msgDiv = document.getElementById('loginMessage');
+            const messageDiv = document.getElementById('loginMessage');
             
             if (!username || !password) {
-                msgDiv.style.display = 'block';
-                msgDiv.innerText = 'እባክዎ ሁሉንም መስኮች ይሙሉ';
+                messageDiv.textContent = 'እባክዎ ሁሉንም መስኮች ይሙሉ';
+                messageDiv.style.display = 'block';
                 return;
             }
             
             try {
-                console.log('Logging in...');
-                const res = await fetch(`${API_URL}/api/student/login`, {
+                const res = await apiFetch('/api/student/login', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password }),
-                    credentials: 'include'
+                    body: JSON.stringify({ username, password })
                 });
                 
                 const data = await res.json();
-                console.log('Login response:', data);
                 
                 if (res.ok) {
-                    alert('ገብተዋል!');
+                    isLoggedIn = true;
+                    currentUser = data;
+                    updateAuthUI();
                     closeLoginModal();
-                    loadQuestionCounts();
+                    loadDepartments();
                 } else {
-                    msgDiv.style.display = 'block';
-                    msgDiv.innerText = data.message || 'ስም ወይም የይለፍ ቃል ትክክል አይደለም';
+                    messageDiv.textContent = 'የተሳሳተ የተጠቃሚ ስም ወይም የይለፍ ቃል';
+                    messageDiv.style.display = 'block';
                 }
             } catch (error) {
-                console.error('Login error:', error);
-                msgDiv.style.display = 'block';
-                msgDiv.innerText = 'ስህተት ተፈጥሯል። ኤፒአይን ያረጋግጡ';
+                messageDiv.textContent = 'ስህተት ተፈጥሯል';
+                messageDiv.style.display = 'block';
             }
         }
 
@@ -367,123 +2182,93 @@
             const username = document.getElementById('regUsername').value;
             const email = document.getElementById('regEmail').value;
             const password = document.getElementById('regPassword').value;
-            const msgDiv = document.getElementById('registerMessage');
+            const messageDiv = document.getElementById('registerMessage');
             
             if (!username || !email || !password) {
-                msgDiv.style.display = 'block';
-                msgDiv.innerText = 'እባክዎ ሁሉንም መስኮች ይሙሉ';
+                messageDiv.textContent = 'እባክዎ ሁሉንም መስኮች ይሙሉ';
+                messageDiv.style.display = 'block';
                 return;
             }
             
             try {
-                const res = await fetch(`${API_URL}/api/student/register`, {
+                const res = await apiFetch('/api/student/register', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, email, password })
                 });
                 
                 const data = await res.json();
+                
                 if (res.ok) {
                     alert(data.message);
                     closeRegisterModal();
                 } else {
-                    msgDiv.style.display = 'block';
-                    msgDiv.innerText = data.message || 'ስህተት ተፈጥሯል';
+                    messageDiv.textContent = data.message || 'ስህተት ተፈጥሯል';
+                    messageDiv.style.display = 'block';
                 }
             } catch (error) {
-                msgDiv.style.display = 'block';
-                msgDiv.innerText = 'ስህተት ተፈጥሯል';
+                messageDiv.textContent = 'ስህተት ተፈጥሯል';
+                messageDiv.style.display = 'block';
             }
         }
 
-        // Load Model Questions
-        async function loadModelQuestions() {
-            try {
-                const res = await fetch(`${API_URL}/api/model-questions`);
-                const questions = await res.json();
-                displayQuestions(questions, '📋 የሞዴል ፈተና ጥያቄዎች');
-            } catch (error) {
-                alert('ጥያቄዎችን ማምጣት አልተቻለም');
-            }
-        }
-
-        // Load Exit Questions
-        async function loadExitQuestions() {
-            try {
-                const res = await fetch(`${API_URL}/api/exit-100-questions`);
-                const questions = await res.json();
-                displayQuestions(questions, '🎯 የ Exit Exam ጥያቄዎች');
-            } catch (error) {
-                alert('ጥያቄዎችን ማምጣት አልተቻለም');
-            }
-        }
-
-        // Display Questions
-        function displayQuestions(questions, title) {
-            document.getElementById('modalTitle').innerText = title;
-            const list = document.getElementById('questionList');
+        // Student Logout
+        async function studentLogout() {
+            await apiFetch('/api/student/logout', { method: 'POST' });
+            isLoggedIn = false;
+            currentUser = null;
+            unlockedDepts = [];
+            updateAuthUI();
             
-            if (!questions || questions.length === 0) {
-                list.innerHTML = '<p style="text-align:center;">ምንም ጥያቄ የለም</p>';
-                document.getElementById('questionsModal').classList.add('active');
-                return;
+            if (document.getElementById('departmentsSection').style.display === 'block') {
+                loadDepartments();
             }
+        }
+
+        // Update Auth UI
+        function updateAuthUI() {
+            const authButtons = document.getElementById('authButtons');
+            const paymentsLink = document.getElementById('paymentsLink');
             
-            let html = '';
-            questions.forEach((q, i) => {
-                html += `
-                    <div class="question-item">
-                        <div style="font-weight:bold; margin-bottom:10px;">${i+1}. ${q.question}</div>
-                        <div class="options">
-                            <div class="option">ሀ) ${q.options.A}</div>
-                            <div class="option">ለ) ${q.options.B}</div>
-                            <div class="option">ሐ) ${q.options.C}</div>
-                            <div class="option">መ) ${q.options.D}</div>
-                        </div>
-                        <div class="correct">✅ ትክክለኛ መልስ: ${q.correct}</div>
-                        ${q.explanation ? `<div class="explanation">💡 ${q.explanation}</div>` : ''}
-                    </div>
+            if (isLoggedIn) {
+                authButtons.innerHTML = `
+                    <span style="padding:12px 16px; background:var(--light); border-radius:40px;">👤 ${currentUser?.username || 'ተማሪ'}</span>
+                    <button class="btn-auth btn-logout" onclick="studentLogout()">🚪 ውጣ</button>
                 `;
-            });
-            
-            list.innerHTML = html;
-            document.getElementById('questionsModal').classList.add('active');
+                paymentsLink.style.display = 'flex';
+            } else {
+                authButtons.innerHTML = `
+                    <button class="btn-auth btn-login" onclick="openLoginModal()">🔑 ግባ</button>
+                    <button class="btn-auth btn-register" onclick="openRegisterModal()">📝 ተመዝገብ</button>
+                `;
+                paymentsLink.style.display = 'none';
+            }
         }
 
-        // Load Question Counts
-        async function loadQuestionCounts() {
+        // Scroll to contact
+        function scrollToContact() {
+            document.getElementById('contactSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Check login status
+        async function checkLoginStatus() {
             try {
-                const modelRes = await fetch(`${API_URL}/api/model-questions`);
-                const modelData = await modelRes.json();
-                document.getElementById('modelCount').innerText = modelData.length;
-                document.getElementById('modelCount2').innerText = modelData.length + ' ጥያቄዎች';
-                
-                const exitRes = await fetch(`${API_URL}/api/exit-100-questions`);
-                const exitData = await exitRes.json();
-                document.getElementById('exitCount').innerText = exitData.length;
-                document.getElementById('exitCount2').innerText = exitData.length + ' ጥያቄዎች';
+                const res = await apiFetch('/api/student/profile');
+                if (res.ok) {
+                    isLoggedIn = true;
+                    currentUser = await res.json();
+                    unlockedDepts = currentUser.unlocked_depts || [];
+                }
             } catch (error) {
-                console.error('Error loading counts:', error);
+                console.error('Not logged in');
+            } finally {
+                updateAuthUI();
             }
         }
 
         // Initialize
-        loadQuestionCounts();
-        
-        // ለማረጋገጫ የAPI ሁኔታ ይፈትሹ
-        async function checkAPI() {
-            try {
-                const res = await fetch(`${API_URL}/api/model-questions`);
-                if (res.ok) {
-                    console.log('API is working!');
-                } else {
-                    console.log('API returned status:', res.status);
-                }
-            } catch (e) {
-                console.error('API not reachable:', e);
-            }
-        }
-        checkAPI();
+        checkLoginStatus();
+        loadModelCount();
+        loadExitCount();
     </script>
 </body>
 </html>
