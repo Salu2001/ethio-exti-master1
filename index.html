@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethio Exit Master - የመውጫ ፈተና ዝግጅት</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .logo h1 {
+            color: #667eea;
+            font-size: 24px;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        .hero {
+            background: white;
+            border-radius: 30px;
+            padding: 60px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .hero h1 {
+            font-size: 48px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .hero p {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 40px;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            color: #666;
+        }
+        .question-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
+        }
+        .card.model { border-top: 4px solid #f59e0b; }
+        .card.exit { border-top: 4px solid #ef4444; }
+        .card-icon { font-size: 48px; margin-bottom: 15px; }
+        .card h3 { font-size: 20px; margin-bottom: 10px; }
+        .card p { color: #666; margin-bottom: 15px; }
+        .card-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-model { background: #fef3c7; color: #f59e0b; }
+        .badge-exit { background: #fee2e2; color: #ef4444; }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .close-btn {
+            background: #fee2e2;
+            color: #ef4444;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .question-item {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .option {
+            padding: 10px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .correct { color: #10b981; font-weight: bold; }
+        .explanation {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 32px; }
+            .stats { flex-direction: column; gap: 20px; }
+        }
+        .error-message {
+            background: #fee2e2;
+            color: #ef4444;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <h1>🎓 Ethio Exit Master</h1>
+            </div>
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" onclick="openLoginModal()">🔑 ግባ</button>
+                <button class="btn btn-primary" onclick="openRegisterModal()">📝 ተመዝገብ</button>
+            </div>
+        </div>
+
+        <div class="hero">
+            <h1>እንኳን ወደ Ethio Exit Master በሰላም መጡ</h1>
+            <p>የዩኒቨርሲቲ የመውጫ ፈተናን በልበ ሙሉነት ይለፉ!</p>
+            <div class="stats" id="stats">
+                <div class="stat">
+                    <div class="stat-number">15+</div>
+                    <div class="stat-label">ኮርሶች</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="modelCount">0</div>
+                    <div class="stat-label">የሞዴል ጥያቄዎች</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="exitCount">0</div>
+                    <div class="stat-label">የExit ጥያቄዎች</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-cards">
+            <div class="card model" onclick="loadModelQuestions()">
+                <div class="card-icon">📋</div>
+                <h3>የሞዴል ፈተና ጥያቄዎች</h3>
+                <p>ለመውጫ ፈተና ዝግጅት የሞዴል ጥያቄዎችን ይለማመዱ</p>
+                <span class="card-badge badge-model" id="modelCount2">በመጫን ላይ...</span>
+            </div>
+            <div class="card exit" onclick="loadExitQuestions()">
+                <div class="card-icon">🎯</div>
+                <h3>የ Exit Exam ጥያቄዎች</h3>
+                <p>100+ የ Exit Exam ጥያቄዎችን ይለማመዱ</p>
+                <span class="card-badge badge-exit" id="exitCount2">በመጫን ላይ...</span>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="/admin-login.html" style="color: white; text-decoration: none;">🔐 አስተዳዳሪ</a>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔑 ይግቡ</h2>
+                <button class="close-btn" onclick="closeLoginModal()">✕</button>
+            </div>
+            <input type="text" id="loginUsername" class="form-input" placeholder="የተጠቃሚ ስም">
+            <input type="password" id="loginPassword" class="form-input" placeholder="የይለፍ ቃል">
+            <button class="btn btn-primary" style="width:100%;" onclick="studentLogin()">ግባ</button>
+            <div id="loginMessage" class="error-message"></div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📝 ይመዝገቡ</h2>
+                <button class="close-btn" onclick="closeRegisterModal()">✕</button>
+            </div>
+            <input type="text" id="regUsername" class="form-input" placeholder="የተጠቃሚ ስም">
+            <input type="email" id="regEmail" class="form-input" placeholder="ኢሜይል">
+            <input type="password" id="regPassword" class="form-input" placeholder="የይለፍ ቃል">
+            <button class="btn btn-primary" style="width:100%;" onclick="studentRegister()">ተመዝገብ</button>
+            <div id="registerMessage" class="error-message"></div>
+        </div>
+    </div>
+
+    <!-- Questions Modal -->
+    <div class="modal" id="questionsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">📋 ጥያቄዎች</h2>
+                <button class="close-btn" onclick="closeQuestionsModal()">✕</button>
+            </div>
+            <div id="questionList"></div>
+        </div>
+    </div>
+
+    <script>
+        // ✅ በጣም አስፈላጊ - የእርስዎን Worker URL እዚህ ያስገቡ
+        const API_URL = 'https://flat-mud-a477.codeofsaladin.workers.dev'; // ይህን ይቀይሩ
+        
+        // ለማረጋገጫ ኮንሶል ላይ ያሳይ
+        console.log('API URL:', API_URL);
+
+        // Modal Functions
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+        }
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
+        }
+        function openRegisterModal() {
+            document.getElementById('registerModal').classList.add('active');
+        }
+        function closeRegisterModal() {
+            document.getElementById('registerModal').classList.remove('active');
+        }
+        function closeQuestionsModal() {
+            document.getElementById('questionsModal').classList.remove('active');
+        }
+
+        // Student Login
+        async function studentLogin() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            const msgDiv = document.getElementById('loginMessage');
+            
+            if (!username || !password) {
+                msgDiv.style.display = 'block';
+                msgDiv.innerText = 'እባክዎ ሁሉንም መስኮች ይሙሉ';
+                return;
+            }
+            
+            try {
+                console.log('Logging in...');
+                const res = await fetch(`${API_URL}/api/student/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password }),
+                    credentials: 'include'
+                });
+                
+                const data = await res.json();
+                console.log('Login response:', data);
+                
+                if (res.ok) {
+                    alert('ገብተዋል!');
+                    closeLoginModal();
+                    loadQuestionCounts();
+                } else {
+                    msgDiv.style.display = 'block';
+                    msgDiv.innerText = data.message || 'ስም ወይም የይለፍ ቃል ትክክል አይደለም';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                msgDiv.style.display = 'block';
+                msgDiv.innerText = 'ስህተት ተፈጥሯል። ኤፒአይን ያረጋግጡ';
+            }
+        }
+
+        // Student Register
+        async function studentRegister() {
+            const username = document.getElementById('regUsername').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const msgDiv = document.getElementById('registerMessage');
+            
+            if (!username || !email || !password) {
+                msgDiv.style.display = 'block';
+                msgDiv.innerText = 'እባክዎ ሁሉንም መስኮች ይሙሉ';
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/api/student/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
+                });
+                
+                const data = await res.json();
+                if (res.ok) {
+                    alert(data.message);
+                    closeRegisterModal();
+                } else {
+                    msgDiv.style.display = 'block';
+                    msgDiv.innerText = data.message || 'ስህተት ተፈጥሯል';
+                }
+            } catch (error) {
+                msgDiv.style.display = 'block';
+                msgDiv.innerText = 'ስህተት ተፈጥሯል';
+            }
+        }
+
+        // Load Model Questions
+        async function loadModelQuestions() {
+            try {
+                const res = await fetch(`${API_URL}/api/model-questions`);
+                const questions = await res.json();
+                displayQuestions(questions, '📋 የሞዴል ፈተና ጥያቄዎች');
+            } catch (error) {
+                alert('ጥያቄዎችን ማምጣት አልተቻለም');
+            }
+        }
+
+        // Load Exit Questions
+        async function loadExitQuestions() {
+            try {
+                const res = await fetch(`${API_URL}/api/exit-100-questions`);
+                const questions = await res.json();
+                displayQuestions(questions, '🎯 የ Exit Exam ጥያቄዎች');
+            } catch (error) {
+                alert('ጥያቄዎችን ማምጣት አልተቻለም');
+            }
+        }
+
+        // Display Questions
+        function displayQuestions(questions, title) {
+            document.getElementById('modalTitle').innerText = title;
+            const list = document.getElementById('questionList');
+            
+            if (!questions || questions.length === 0) {
+                list.innerHTML = '<p style="text-align:center;">ምንም ጥያቄ የለም</p>';
+                document.getElementById('questionsModal').classList.add('active');
+                return;
+            }
+            
+            let html = '';
+            questions.forEach((q, i) => {
+                html += `
+                    <div class="question-item">
+                        <div style="font-weight:bold; margin-bottom:10px;">${i+1}. ${q.question}</div>
+                        <div class="options">
+                            <div class="option">ሀ) ${q.options.A}</div>
+                            <div class="option">ለ) ${q.options.B}</div>
+                            <div class="option">ሐ) ${q.options.C}</div>
+                            <div class="option">መ) ${q.options.D}</div>
+                        </div>
+                        <div class="correct">✅ ትክክለኛ መልስ: ${q.correct}</div>
+                        ${q.explanation ? `<div class="explanation">💡 ${q.explanation}</div>` : ''}
+                    </div>
+                `;
+            });
+            
+            list.innerHTML = html;
+            document.getElementById('questionsModal').classList.add('active');
+        }
+
+        // Load Question Counts
+        async function loadQuestionCounts() {
+            try {
+                const modelRes = await fetch(`${API_URL}/api/model-questions`);
+                const modelData = await modelRes.json();
+                document.getElementById('modelCount').innerText = modelData.length;
+                document.getElementById('modelCount2').innerText = modelData.length + ' ጥያቄዎች';
+                
+                const exitRes = await fetch(`${API_URL}/api/exit-100-questions`);
+                const exitData = await exitRes.json();
+                document.getElementById('exitCount').innerText = exitData.length;
+                document.getElementById('exitCount2').innerText = exitData.length + ' ጥያቄዎች';
+            } catch (error) {
+                console.error('Error loading counts:', error);
+            }
+        }
+
+        // Initialize
+        loadQuestionCounts();
+        
+        // ለማረጋገጫ የAPI ሁኔታ ይፈትሹ
+        async function checkAPI() {
+            try {
+                const res = await fetch(`${API_URL}/api/model-questions`);
+                if (res.ok) {
+                    console.log('API is working!');
+                } else {
+                    console.log('API returned status:', res.status);
+                }
+            } catch (e) {
+                console.error('API not reachable:', e);
+            }
+        }
+        checkAPI();
+    </script>
+</body>
+</html>
